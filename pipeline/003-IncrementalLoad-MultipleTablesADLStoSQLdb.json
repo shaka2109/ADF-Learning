@@ -1,0 +1,165 @@
+{
+    "name": "003-IncrementalLoad-MultipleTablesADLStoSQLdb",
+    "properties": {
+        "activities": [
+            {
+                "name": "GetTableDetails",
+                "type": "Lookup",
+                "dependsOn": [],
+                "policy": {
+                    "timeout": "0.12:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "source": {
+                        "type": "AzureSqlSource",
+                        "sqlReaderQuery": "SELECT * FROM dbo.tbl_incremental_load\nWHERE ISACTIVE=1",
+                        "queryTimeout": "02:00:00",
+                        "partitionOption": "None"
+                    },
+                    "dataset": {
+                        "referenceName": "DS_SQL",
+                        "type": "DatasetReference"
+                    },
+                    "firstRowOnly": false
+                }
+            },
+            {
+                "name": "LoopInFiles",
+                "type": "ForEach",
+                "dependsOn": [
+                    {
+                        "activity": "GetTableDetails",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "items": {
+                        "value": "@activity('GetTableDetails').output.value",
+                        "type": "Expression"
+                    },
+                    "isSequential": true,
+                    "activities": [
+                        {
+                            "name": "Copy data ADLS to SQL db",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "0.12:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSReadSettings",
+                                        "recursive": true,
+                                        "modifiedDatetimeStart": {
+                                            "value": "@addToTime(item().FileLastModifiedTimeStamp,1,'Second')",
+                                            "type": "Expression"
+                                        },
+                                        "modifiedDatetimeEnd": {
+                                            "value": "@utcNow()",
+                                            "type": "Expression"
+                                        },
+                                        "wildcardFolderPath": {
+                                            "value": "@item().ADLS_Path",
+                                            "type": "Expression"
+                                        },
+                                        "wildcardFileName": "*.csv",
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "AzureSqlSink",
+                                    "writeBehavior": "insert",
+                                    "sqlWriterUseTableLock": false
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "DS_Dyn_Inc_Source",
+                                    "type": "DatasetReference"
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "DS_SQL_Sink_Inc",
+                                    "type": "DatasetReference",
+                                    "parameters": {
+                                        "tablename": {
+                                            "value": "@item().TableName",
+                                            "type": "Expression"
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        {
+                            "name": "Execute Pipeline",
+                            "type": "ExecutePipeline",
+                            "dependsOn": [
+                                {
+                                    "activity": "Copy data ADLS to SQL db",
+                                    "dependencyConditions": [
+                                        "Succeeded"
+                                    ]
+                                }
+                            ],
+                            "policy": {
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "pipeline": {
+                                    "referenceName": "PL-GetMaxLastModifiedTimestamp",
+                                    "type": "PipelineReference"
+                                },
+                                "waitOnCompletion": true,
+                                "parameters": {
+                                    "pl_folderpath": {
+                                        "value": "@concat(item().ADLS_Path,'/')",
+                                        "type": "Expression"
+                                    },
+                                    "pr_tablename": {
+                                        "value": "@item().TableName",
+                                        "type": "Expression"
+                                    }
+                                }
+                            }
+                        }
+                    ]
+                }
+            }
+        ],
+        "folder": {
+            "name": "Scenarios/IncrementalLoadFromADLStoSQLdbUsingStaging"
+        },
+        "annotations": [],
+        "lastPublishTime": "2025-06-06T08:22:17Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
