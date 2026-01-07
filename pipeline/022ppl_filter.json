@@ -1,0 +1,40 @@
+{
+	"name": "022ppl_filter",
+	"properties": {
+		"description": "Se filtra a partir de un Array, ya sea creado en esta actividad, o como resultado de una previa.",
+		"activities": [
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@variables('Numbers')",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@greater(item(),3)",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"Numbers": {
+				"type": "Array",
+				"defaultValue": [
+					1,
+					2,
+					3,
+					4,
+					5,
+					6
+				]
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-20T17:42:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

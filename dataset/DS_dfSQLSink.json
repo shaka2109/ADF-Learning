@@ -1,0 +1,17 @@
+{
+	"name": "DS_dfSQLSink",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ToSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "dfNewOrders"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

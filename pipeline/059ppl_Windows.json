@@ -1,0 +1,37 @@
+{
+	"name": "059ppl_Windows",
+	"properties": {
+		"activities": [
+			{
+				"name": "Data Windows",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_013_Windows",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "Transformations"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-30T16:00:52Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

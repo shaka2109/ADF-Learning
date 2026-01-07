@@ -1,0 +1,32 @@
+{
+	"name": "DS_Types",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_excel",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "Sheet1",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "Metadata.xlsx",
+				"folderPath": "Metadata",
+				"fileSystem": "mycontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "Filename",
+				"type": "String"
+			},
+			{
+				"name": "Filepath",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

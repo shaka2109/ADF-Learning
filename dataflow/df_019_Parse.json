@@ -1,0 +1,76 @@
+{
+	"name": "df_019_Parse",
+	"properties": {
+		"description": "Parse es como Split, sirve para dividir datos",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_EXCELOrders",
+						"type": "DatasetReference"
+					},
+					"name": "ReadXLSX"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQLParse",
+						"type": "DatasetReference"
+					},
+					"name": "SaveAsSQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "ParseDelimitedText"
+				},
+				{
+					"name": "ParseJSON"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OrderId as string,",
+				"          OrderDate as string,",
+				"          OrderDetails as string,",
+				"          BatchDetails as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ReadXLSX",
+				"ReadXLSX parse(OrderDet = OrderDetails ? (Item as string,",
+				"          Qty as integer,",
+				"          Price as integer),",
+				"     format: 'delimited',",
+				"     columnNamesAsHeader: false,",
+				"     columnDelimiter: '|',",
+				"     nullValue: '') ~> ParseDelimitedText",
+				"ParseDelimitedText parse(BatchDet = BatchDetails ? (batchid as integer,",
+				"          site as string),",
+				"     format: 'json',",
+				"     documentForm: 'arrayOfDocuments') ~> ParseJSON",
+				"ParseJSON sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          OrderId,",
+				"          OrderDate,",
+				"          Item = OrderDet.Item,",
+				"          Quantity = OrderDet.Qty,",
+				"          Price = OrderDet.Price,",
+				"          Batchid = BatchDet.batchid,",
+				"          Site = BatchDet.site",
+				"     )) ~> SaveAsSQL"
+			]
+		}
+	}
+}

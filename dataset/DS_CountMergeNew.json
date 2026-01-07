@@ -1,0 +1,51 @@
+{
+	"name": "DS_CountMergeNew",
+	"properties": {
+		"description": "Se crea un parámetro para luego tomar una variable tomar el nombre del loop",
+		"linkedServiceName": {
+			"referenceName": "LS_CSV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Paramcountry": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().Paramcountry",
+					"type": "Expression"
+				},
+				"folderPath": "Countries",
+				"fileSystem": "mycontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "OrderDate",
+				"type": "String"
+			},
+			{
+				"name": "ProductKey",
+				"type": "String"
+			},
+			{
+				"name": "EnglishProductName",
+				"type": "String"
+			},
+			{
+				"name": "SalesAmount",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

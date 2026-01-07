@@ -1,0 +1,29 @@
+{
+	"name": "DS_MigMultSQLTables",
+	"properties": {
+		"description": "Se llama los nombres de las tablas dinamicamente, creando un parametro",
+		"linkedServiceName": {
+			"referenceName": "LS_LocalSQL",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ParamTableName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@split(dataset().ParamTableName,'.')[0]",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@split(dataset().ParamTableName,'.')[1]",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

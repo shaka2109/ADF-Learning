@@ -1,0 +1,61 @@
+{
+	"name": "df_018_Flatten",
+	"properties": {
+		"description": "Tienes que ir a JSON settings y seleccionar Array ...",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_JSONFlatten",
+						"type": "DatasetReference"
+					},
+					"name": "ReadJSON"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQLFlatten",
+						"type": "DatasetReference"
+					},
+					"name": "SaveAsSQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FlattenJSON"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OrderId as integer,",
+				"          OrderDate as string,",
+				"          Items as string[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> ReadJSON",
+				"ReadJSON foldDown(unroll(Items),",
+				"     mapColumn(",
+				"          OrderId,",
+				"          OrderDate,",
+				"          Items",
+				"     ),",
+				"     skipDuplicateMapInputs: false,",
+				"     skipDuplicateMapOutputs: false) ~> FlattenJSON",
+				"FlattenJSON sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SaveAsSQL"
+			]
+		}
+	}
+}

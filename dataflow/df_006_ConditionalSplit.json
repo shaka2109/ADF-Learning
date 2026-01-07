@@ -1,0 +1,75 @@
+{
+	"name": "df_006_ConditionalSplit",
+	"properties": {
+		"description": "Extrae los datos filtrados en una nueva tabla. Ejemplo, extrae datos de India de la columna de países en otra tabla y deja el resto en otra tabla.",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_DFordersNew",
+						"type": "DatasetReference"
+					},
+					"name": "ReadCSV"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SinkIndia",
+						"type": "DatasetReference"
+					},
+					"name": "SinkIndia"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_SinkAustralia",
+						"type": "DatasetReference"
+					},
+					"name": "SinkAustralia"
+				}
+			],
+			"transformations": [
+				{
+					"name": "split1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OrderDate as date 'dd-MM-yyyy',",
+				"          ProductKey as short,",
+				"          Country as string,",
+				"          EnglishProductName as string,",
+				"          SalesAmount as double,",
+				"          TaxAmt as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ReadCSV",
+				"ReadCSV split(Country=='India',",
+				"     Country=='Australia',",
+				"     disjoint: false) ~> split1@(India, Australia)",
+				"split1@India sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SinkIndia",
+				"split1@Australia sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SinkAustralia"
+			]
+		}
+	}
+}

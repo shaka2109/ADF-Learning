@@ -1,0 +1,35 @@
+{
+	"name": "DS_JSONempnew",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ToSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "EmployeeID",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EmpName",
+				"type": "varchar"
+			},
+			{
+				"name": "Email",
+				"type": "varchar"
+			},
+			{
+				"name": "Contact",
+				"type": "varchar"
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "EmployeesNew"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

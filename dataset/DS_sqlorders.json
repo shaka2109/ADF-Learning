@@ -1,0 +1,45 @@
+{
+	"name": "DS_sqlorders",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ToSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "OrderDate",
+				"type": "datetime",
+				"precision": 23,
+				"scale": 3
+			},
+			{
+				"name": "ProductKey",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "EnglishProductName",
+				"type": "varchar"
+			},
+			{
+				"name": "SalesAmount",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			},
+			{
+				"name": "TaxAmt",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "OrdersNew"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

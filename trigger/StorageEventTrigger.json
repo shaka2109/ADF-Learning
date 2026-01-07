@@ -1,0 +1,18 @@
+{
+	"name": "StorageEventTrigger",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/mycontainer/blobs/Files",
+			"blobPathEndsWith": ".csv",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/532604cc-e260-43d3-bc1b-fffcbe4dbc60/resourceGroups/CDU-DEV/providers/Microsoft.Storage/storageAccounts/cdudemyvadls",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

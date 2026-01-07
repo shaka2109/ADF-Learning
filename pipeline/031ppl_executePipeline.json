@@ -1,0 +1,27 @@
+{
+	"name": "031ppl_executePipeline",
+	"properties": {
+		"description": "Ejecuta pipelines que se han creado antes, invocandolas",
+		"activities": [
+			{
+				"name": "Execute Pipeline008",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "008ppl_activity_variables",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-12-21T00:53:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

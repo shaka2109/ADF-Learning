@@ -1,0 +1,17 @@
+{
+	"name": "DS_SQLCast",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ToSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tblCast"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

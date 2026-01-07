@@ -1,0 +1,33 @@
+{
+	"name": "DS_Regions",
+	"properties": {
+		"description": "Se usa concat para llamar la carpeta de las regiones (carpeta de tercer nivel). Se tuvo que crear un parametro usado como nombre de los paises.",
+		"linkedServiceName": {
+			"referenceName": "LS_CSV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ParamCountryName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@concat('Output1/',dataset().ParamCountryName)",
+					"type": "Expression"
+				},
+				"fileSystem": "mycontainer"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

@@ -1,0 +1,81 @@
+{
+	"name": "df_021_IncrementarlLoad",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSV",
+						"type": "DatasetReference"
+					},
+					"name": "ReadCSV"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SOrders",
+						"type": "DatasetReference"
+					},
+					"name": "ToSQLDB"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FilterNewData"
+				},
+				{
+					"name": "AddTimeStampColumn"
+				}
+			],
+			"scriptLines": [
+				"parameters{",
+				"     param_date as string ('01-01-2020')",
+				"}",
+				"source(output(",
+				"          OrderDate as date 'dd-MM-yyyy',",
+				"          ProductKey as short,",
+				"          Country as string,",
+				"          EnglishProductName as string,",
+				"          SalesAmount as double,",
+				"          TaxAmt as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ReadCSV",
+				"ReadCSV filter(OrderDate>toDate($param_date, 'dd-MM-yyyy')) ~> FilterNewData",
+				"FilterNewData derive(CurrentTimeStamp = currentTimestamp()) ~> AddTimeStampColumn",
+				"AddTimeStampColumn sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          OrderDate as string,",
+				"          ProductKey as string,",
+				"          Country as string,",
+				"          EnglishProductName as string,",
+				"          SalesAmount as string,",
+				"          TaxAmt as string,",
+				"          CurrentTimeStamp as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     dateFormat:'dd-MM-yyyy',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          OrderDate,",
+				"          ProductKey,",
+				"          Country,",
+				"          EnglishProductName,",
+				"          SalesAmount,",
+				"          TaxAmt,",
+				"          CurrentTimeStamp",
+				"     )) ~> ToSQLDB"
+			]
+		}
+	}
+}

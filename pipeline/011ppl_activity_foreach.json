@@ -1,0 +1,70 @@
+{
+	"name": "011ppl_activity_foreach",
+	"properties": {
+		"description": "1. Creo la actividad ForEach. 2. Creo el parametro con array si son varios a iterar. 3. Agrego la actividad a iterar dentro del ForEach. 4. Agrego el valor dinamico (@Item). 5. Ejecutar... Secuencial activado: Se ejecuta en serio\nSecuencial desactivado: En paralelo.\nBatch: Indica ejecucion en grupos",
+		"activities": [
+			{
+				"name": "ForEach 011",
+				"type": "ForEach",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@pipeline().parameters.Countries",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Countries",
+								"value": {
+									"value": "@item()",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"Numbers": {
+				"type": "array",
+				"defaultValue": [
+					1,
+					2,
+					3,
+					4
+				]
+			},
+			"Countries": {
+				"type": "array",
+				"defaultValue": [
+					"Colombia",
+					"Peru",
+					"Brasil"
+				]
+			}
+		},
+		"variables": {
+			"x": {
+				"type": "Integer"
+			},
+			"Countries": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-19T16:28:46Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

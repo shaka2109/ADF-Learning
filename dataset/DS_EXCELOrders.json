@@ -1,0 +1,39 @@
+{
+	"name": "DS_EXCELOrders",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_excel",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"sheetName": "OrderDetails",
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "OrderDetails.xlsx",
+				"fileSystem": "mycontainer"
+			},
+			"firstRowAsHeader": true
+		},
+		"schema": [
+			{
+				"name": "OrderId",
+				"type": "String"
+			},
+			{
+				"name": "OrderDate",
+				"type": "String"
+			},
+			{
+				"name": "OrderDetails",
+				"type": "String"
+			},
+			{
+				"name": "BatchDetails",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

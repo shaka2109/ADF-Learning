@@ -1,0 +1,28 @@
+{
+	"name": "DS_MigMultTablesASQL",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ToSQL",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"ParamSinkTables": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@split(dataset().ParamSinkTables,'.')[0]",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@split(dataset().ParamSinkTables,'.')[1]",
+				"type": "Expression"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

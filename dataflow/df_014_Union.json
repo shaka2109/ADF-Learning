@@ -1,0 +1,70 @@
+{
+	"name": "df_014_Union",
+	"properties": {
+		"description": "Name: Siempre y cuando las columnas en las tablas compartan los mismos nombres\nPosición: En caso que los nombres de las columnas fueran diferentes, se une por posición.",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSVUnion",
+						"type": "DatasetReference"
+					},
+					"name": "ReadCSV1"
+				},
+				{
+					"dataset": {
+						"referenceName": "DS_CSVUnion2",
+						"type": "DatasetReference"
+					},
+					"name": "ReadCSV2"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQLUnion",
+						"type": "DatasetReference"
+					},
+					"name": "SaveAsSQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Union"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EMPID as short,",
+				"          EMPNAME as string,",
+				"          SALARY as integer,",
+				"          Month as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ReadCSV1",
+				"source(output(",
+				"          EMPLOYEENAME as short,",
+				"          EMPLOYENAME as string,",
+				"          EMPSALARY as integer,",
+				"          Monthname as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ReadCSV2",
+				"ReadCSV1, ReadCSV2 union(byName: false)~> Union",
+				"Union sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SaveAsSQL"
+			]
+		}
+	}
+}

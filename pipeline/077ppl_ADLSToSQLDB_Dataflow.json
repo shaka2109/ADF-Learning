@@ -1,0 +1,76 @@
+{
+	"name": "077ppl_ADLSToSQLDB_Dataflow",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetMaxDate",
+				"description": "Se llama la fecha mayor de los datos por medio de una query",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "Select IsNull(Max(CONVERT(date, OrderDate, 105)),'01-01-2020') as MaxDate From Orders",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_OrdersStage",
+						"type": "DatasetReference"
+					}
+				}
+			},
+			{
+				"name": "ADLS To SQLDB",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [
+					{
+						"activity": "GetMaxDate",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_021_IncrementarlLoad",
+						"type": "DataFlowReference",
+						"parameters": {
+							"param_date": {
+								"value": "'@{formatDateTime(activity('GetMaxDate').output.firstRow.MaxDate,'dd-MM-yyyy')}'",
+								"type": "Expression"
+							}
+						}
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "Incremental_Loads"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-01-05T18:02:23Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

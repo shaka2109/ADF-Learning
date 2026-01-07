@@ -1,0 +1,37 @@
+{
+	"name": "026ppl_script",
+	"properties": {
+		"description": "Escribes scripts que afecten las tablas en la base de datos.\nUsualmente DDL o DML",
+		"activities": [
+			{
+				"name": "Script",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_ToSQL",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "ALTER TABLE Orders\nADD City varchar(20)"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-12-20T23:05:33Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

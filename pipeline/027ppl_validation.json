@@ -1,0 +1,25 @@
+{
+	"name": "027ppl_validation",
+	"properties": {
+		"description": "Funciona como Metadata pero especificando una busqueda por un tiempo determiinado que tu especificas.",
+		"activities": [
+			{
+				"name": "Validation1",
+				"type": "Validation",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_OrdersCSV",
+						"type": "DatasetReference"
+					},
+					"timeout": "0.12:00:00",
+					"sleep": 10
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-12-20T23:18:58Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

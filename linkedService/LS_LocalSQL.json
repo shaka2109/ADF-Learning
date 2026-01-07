@@ -1,0 +1,21 @@
+{
+	"name": "LS_LocalSQL",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "tcp:JAKE-ALEXANDER,1433",
+			"database": "AdventureWorksDW2025",
+			"encrypt": "True",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "etl_user",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkZTY5Mjg0Zi0xYTFiLTQ3M2QtOTgxNy0zMmUxMDVlODAzMWQiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "Self-Hosted-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

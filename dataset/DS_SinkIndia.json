@@ -1,0 +1,17 @@
+{
+	"name": "DS_SinkIndia",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ToSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tblIndia"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

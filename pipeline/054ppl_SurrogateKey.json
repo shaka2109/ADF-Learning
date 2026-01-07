@@ -1,0 +1,38 @@
+{
+	"name": "054ppl_SurrogateKey",
+	"properties": {
+		"description": "Columna numerica de identificacion (ID)",
+		"activities": [
+			{
+				"name": "Data Surrogate Key",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_008_SurrogateKey",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "Transformations"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-29T21:43:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

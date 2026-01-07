@@ -1,0 +1,64 @@
+{
+	"name": "df_011_Unpivot",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQLUnpivot",
+						"type": "DatasetReference"
+					},
+					"name": "ReadTable"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQLUnpivotOut",
+						"type": "DatasetReference"
+					},
+					"name": "SaveAsSQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "UnpivotColumns"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          EnglishProductName as string,",
+				"          Australia as double,",
+				"          Canada as double,",
+				"          France as double,",
+				"          Germany as double,",
+				"          India as double,",
+				"          Italy as double,",
+				"          {United States} as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> ReadTable",
+				"ReadTable unpivot(output(",
+				"          Country as string,",
+				"          SalesAmount as double",
+				"     ),",
+				"     ungroupBy(EnglishProductName),",
+				"     lateral: true,",
+				"     ignoreNullPivots: false) ~> UnpivotColumns",
+				"UnpivotColumns sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SaveAsSQL"
+			]
+		}
+	}
+}

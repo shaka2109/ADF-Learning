@@ -1,0 +1,88 @@
+{
+	"name": "024ppl_switch",
+	"properties": {
+		"description": "Funciona como CASE en SQL.\nAgrega las variables siempre como String\nDefault arroja un valor cuando no se cumple ningun CASE",
+		"activities": [
+			{
+				"name": "Switch",
+				"type": "Switch",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"on": {
+						"value": "@variables('x')",
+						"type": "Expression"
+					},
+					"cases": [
+						{
+							"value": "1000",
+							"activities": [
+								{
+									"name": "Set 1k",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "result",
+										"value": "1 kilos"
+									}
+								}
+							]
+						},
+						{
+							"value": "2000",
+							"activities": [
+								{
+									"name": "Set 2k",
+									"type": "SetVariable",
+									"dependsOn": [],
+									"policy": {
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [],
+									"typeProperties": {
+										"variableName": "result",
+										"value": "2 kilos"
+									}
+								}
+							]
+						}
+					],
+					"defaultActivities": [
+						{
+							"name": "Set variable1",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "result",
+								"value": "Lo que sea"
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"x": {
+				"type": "String",
+				"defaultValue": "5000"
+			},
+			"result": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-20T23:05:33Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

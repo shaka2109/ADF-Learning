@@ -1,0 +1,42 @@
+{
+	"name": "021ppl_lookup",
+	"properties": {
+		"description": "Devuelve los datos de tabla, base de datos o cualquier fuente (Filas).\nTener en cuenta que devuelve solo 5000 filas o cierta cantidad de memoria. ",
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"storeSettings": {
+							"type": "AzureBlobFSReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"dataset": {
+						"referenceName": "DS_OrdersCSV",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-12-20T17:22:12Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

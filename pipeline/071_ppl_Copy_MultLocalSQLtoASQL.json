@@ -1,0 +1,203 @@
+{
+	"name": "071_ppl_Copy_MultLocalSQLtoASQL",
+	"properties": {
+		"description": "Se copian multiples tablas locales a Azure SQL. Se usa la creación de una extra tabla que se usa como mapeo para el lookup",
+		"activities": [
+			{
+				"name": "ReadTableInfo",
+				"description": "Esta actividad se usa para realizar una query y llamar los nombres de las tablas que cumplan la condicion de IsActive 1 (filtrar las tablas que se quieren cargar)",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT Tablename\nFROM tblMappings\nWHERE IsActive = 1",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQLMigMap",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "For each table",
+				"description": "Se toman los nombres que se han filtrado de la tabla tblMappings y los cuales se can a cargar a ASQL",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "ReadTableInfo",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('ReadTableInfo').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set FileName",
+							"description": "Almacena los nombres de las tablas que vienen del loop",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "TableName",
+								"value": {
+									"value": "@item().Tablename",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Copy tables",
+							"description": "Aqui se usa SQL Server ya que queremos copiar las tablas que corresponden a los nombres de la variable.",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set FileName",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"tableOption": "autoCreate",
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_MigMultSQLTables",
+									"type": "DatasetReference",
+									"parameters": {
+										"ParamTableName": {
+											"value": "@variables('TableName')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_MigMultTablesASQL",
+									"type": "DatasetReference",
+									"parameters": {
+										"ParamSinkTables": {
+											"value": "@variables('TableName')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "Update Table",
+							"description": "Se usa para actualizar la tabla de mapeo ",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "Copy tables",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[dbo].[sp_UpdateTableInfo]",
+								"storedProcedureParameters": {
+									"SinkRows": {
+										"value": {
+											"value": "@activity('Copy tables').output.rowsCopied",
+											"type": "Expression"
+										},
+										"type": "Int64"
+									},
+									"SourceRows": {
+										"value": {
+											"value": "@activity('Copy tables').output.rowsRead",
+											"type": "Expression"
+										},
+										"type": "Int64"
+									},
+									"Tablename": {
+										"value": {
+											"value": "@variables('TableName')",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "LS_ToSQL",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"TableName": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-01-04T16:46:41Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

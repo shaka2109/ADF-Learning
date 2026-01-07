@@ -1,0 +1,94 @@
+{
+	"name": "015ppl_act_append_variable",
+	"properties": {
+		"description": "Acumula el valor en un arreglo, no hace operaciones, solo acumula en un arreglo (append)",
+		"activities": [
+			{
+				"name": "Append Variable",
+				"type": "AppendVariable",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "x",
+					"value": "100"
+				}
+			},
+			{
+				"name": "Result variable",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Append Variable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "output",
+					"value": {
+						"value": "@variables('x')",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Append Variable2",
+				"type": "AppendVariable",
+				"dependsOn": [
+					{
+						"activity": "Result variable",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "x",
+					"value": "200"
+				}
+			},
+			{
+				"name": "Result variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Append Variable2",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "output",
+					"value": {
+						"value": "@variables('x')",
+						"type": "Expression"
+					}
+				}
+			}
+		],
+		"variables": {
+			"x": {
+				"type": "Array"
+			},
+			"output": {
+				"type": "Array"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-19T19:42:40Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

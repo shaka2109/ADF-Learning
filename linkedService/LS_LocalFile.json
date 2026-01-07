@@ -1,0 +1,17 @@
+{
+	"name": "LS_LocalFile",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "FileServer",
+		"typeProperties": {
+			"host": "C:\\",
+			"userId": "JAKE-ALEXANDER\\etl_user",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI4NDlmMTIwZS0zNTExLTQzOTYtOWExNS1mODZiYmU0Yzc5NTciLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "Self-Hosted-IR",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

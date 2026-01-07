@@ -1,0 +1,197 @@
+{
+	"name": "041_ppl_Merge_DataFromMultiplesFiles",
+	"properties": {
+		"description": "Tomar varios archivos CSV de una carpeta, y unir los datos de ellos en una sola tabla, agregando una columna extra con los nombres de los archivos.\nIMPORTANTE: La columna adicional a la tabla final con los nombres de los archivos que corresponden cada fila. en 'Additional columns'.\nNo uses Truncate cuando el copy este en un loop, solo mostrara la ultima iteracion.",
+		"activities": [
+			{
+				"name": "Get File names",
+				"description": "Toma los nombres de todos los archivos en la carpeta y los guardamos en una variable",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Truncar Datos",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_CountMerge",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Loop country names",
+				"description": "Se usa para iterar por los nombre de los paises, aplicando las actividades a cada uno de ellos.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get File names",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get File names').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Copy files",
+							"description": "Copiar los archivos a uno solo. No se puede usar la misma DS fuente porque debemos pasar el nombre del archivo aqui, no la carpeta",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set FileNames",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "Country",
+											"value": {
+												"value": "@replace(variables('CountryNames'),'.csv','')",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_CountMergeNew",
+									"type": "DatasetReference",
+									"parameters": {
+										"Paramcountry": {
+											"value": "@variables('CountryNames')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SQLCountMerge",
+									"type": "DatasetReference"
+								}
+							]
+						},
+						{
+							"name": "Set FileNames",
+							"description": "Guarda los nombres de los archivos en la variable creada aqui",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "CountryNames",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Truncar Datos",
+				"description": "El Script se usa aqui para truncar los datos cada vez que se corra la pipeline y evitar duplicados. No se puede hacer en la actividad Copy porque mostraría solo la ultima iteración.",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_ToSQL",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "TRUNCATE TABLE Countries"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"variables": {
+			"CountryNames": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-23T19:31:04Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

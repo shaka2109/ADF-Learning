@@ -1,0 +1,46 @@
+{
+	"name": "DS_SQLInvData",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ToSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "YEAR",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "MONTH",
+				"type": "tinyint",
+				"precision": 3
+			},
+			{
+				"name": "INVOICEID",
+				"type": "varchar"
+			},
+			{
+				"name": "COUNTRY",
+				"type": "varchar"
+			},
+			{
+				"name": "REGION",
+				"type": "varchar"
+			},
+			{
+				"name": "SALES",
+				"type": "money",
+				"precision": 19,
+				"scale": 4
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "InvoiceData"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

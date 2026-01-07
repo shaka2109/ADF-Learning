@@ -1,0 +1,78 @@
+{
+	"name": "073ppl_Trigger_Storage",
+	"properties": {
+		"description": "Se usa cualquier pipeline creado para ejecutarlo a través de un trigger",
+		"activities": [
+			{
+				"name": "x",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "x",
+					"value": "Colombia"
+				}
+			},
+			{
+				"name": "y",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "x",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "y",
+					"value": 10
+				}
+			},
+			{
+				"name": "y1",
+				"description": "El valor y sobreescribe el valor anterior.\nLas actividades estan en serie",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "y",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "y",
+					"value": 100
+				}
+			}
+		],
+		"variables": {
+			"x": {
+				"type": "String",
+				"defaultValue": "xyz"
+			},
+			"y": {
+				"type": "Integer",
+				"defaultValue": 1
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-01-04T18:23:00Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

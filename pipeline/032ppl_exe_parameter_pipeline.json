@@ -1,0 +1,29 @@
+{
+	"name": "032ppl_exe_parameter_pipeline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Exe Parameter Pipeline",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "032ppl_parameter",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"x": 20
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-12-21T17:28:47Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

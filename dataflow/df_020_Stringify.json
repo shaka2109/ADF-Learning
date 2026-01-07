@@ -1,0 +1,59 @@
+{
+	"name": "df_020_Stringify",
+	"properties": {
+		"description": "Crea una nueva carpeta tomando los datos array de una columna y los convierte en string",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_JSONEmployeesN",
+						"type": "DatasetReference"
+					},
+					"name": "ReadJSON"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_CSVEmployeesN",
+						"type": "DatasetReference"
+					},
+					"name": "SaveAsCSV"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Stringify"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          empid as integer,",
+				"          empname as string,",
+				"          salary as integer,",
+				"          phone as (mobile as integer, home as integer)[]",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false,",
+				"     documentForm: 'arrayOfDocuments') ~> ReadJSON",
+				"ReadJSON stringify(Phones = phone ? string,",
+				"     format: 'json') ~> Stringify",
+				"Stringify sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     umask: 0022,",
+				"     preCommands: [],",
+				"     postCommands: [],",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     mapColumn(",
+				"          empid,",
+				"          empname,",
+				"          salary,",
+				"          Phones",
+				"     )) ~> SaveAsCSV"
+			]
+		}
+	}
+}

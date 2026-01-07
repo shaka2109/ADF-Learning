@@ -1,0 +1,55 @@
+{
+	"name": "df_001_Intro",
+	"properties": {
+		"description": "Ten en cuenta que  el tipo de datos sea consistente para realizar las transformaciones. Tienes que ir a projection y Detect data type.",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_OrdersCSV",
+						"type": "DatasetReference"
+					},
+					"name": "ReadCSV",
+					"description": "Agrega una fuente de datos"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_dfSQLSink",
+						"type": "DatasetReference"
+					},
+					"name": "SinktoSQL"
+				}
+			],
+			"transformations": [],
+			"scriptLines": [
+				"source(output(",
+				"          OrderDate as date,",
+				"          ProductKey as short,",
+				"          Country as string,",
+				"          EnglishProductName as string,",
+				"          SalesAmount as double,",
+				"          UnitPrice as double,",
+				"          OrderQuantity as short,",
+				"          TaxAmt as double,",
+				"          TotalProductCost as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ReadCSV",
+				"ReadCSV sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SinktoSQL"
+			]
+		}
+	}
+}

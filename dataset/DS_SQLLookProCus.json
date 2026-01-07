@@ -1,0 +1,17 @@
+{
+	"name": "DS_SQLLookProCus",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ToSQL",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "tblLookupProCus"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

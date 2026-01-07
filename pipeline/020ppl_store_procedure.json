@@ -1,0 +1,37 @@
+{
+	"name": "020ppl_store_procedure",
+	"properties": {
+		"description": "1. Crea una SP que inserte, altere, borre, etc. en la base de datos\n2. Crea una actividad SP aqui que llame la SP de la base de datos.\n3. Al ejecutarse, el resultado se ve de vuelta en la base de datos.",
+		"activities": [
+			{
+				"name": "Stored procedure",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[dbo].[sp_ProductWiseSales]",
+					"storedProcedureParameters": {
+						"country": {
+							"value": "France",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_ToSQL",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2025-12-20T16:58:21Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

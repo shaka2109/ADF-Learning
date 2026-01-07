@@ -1,0 +1,64 @@
+{
+	"name": "df_013_Windows",
+	"properties": {
+		"description": "Over = Partition by (Opcional)\nSort = Order by\nRange by = Unbounded (No requerido)\nWindow Columns = Nueva columna con el la funcion (sum,avg,rank...etc)",
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DS_DFordersNew",
+						"type": "DatasetReference"
+					},
+					"name": "ReadCSV"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DS_SQLWindow",
+						"type": "DatasetReference"
+					},
+					"name": "SaveAsSQL"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Window"
+				},
+				{
+					"name": "Aggregate"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          OrderDate as date 'dd-MM-yyyy',",
+				"          ProductKey as short,",
+				"          Country as string,",
+				"          EnglishProductName as string,",
+				"          SalesAmount as double,",
+				"          TaxAmt as double",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ReadCSV",
+				"Aggregate window(over(OrderYear = year(OrderDate),",
+				"          OrderMonth = month(OrderDate)),",
+				"     asc(OrderDate, true),",
+				"     CummSales = round(sum(TotalSales),2)) ~> Window",
+				"ReadCSV aggregate(groupBy(OrderDate),",
+				"     TotalSales = round(sum(SalesAmount),2)) ~> Aggregate",
+				"Window sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     format: 'table',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     errorHandlingOption: 'stopOnFirstError') ~> SaveAsSQL"
+			]
+		}
+	}
+}

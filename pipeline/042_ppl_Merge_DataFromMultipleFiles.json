@@ -1,0 +1,151 @@
+{
+	"name": "042_ppl_Merge_DataFromMultipleFiles",
+	"properties": {
+		"description": "En teoría usar dos loops pero ADF no lo permite. Por lo tanto se usa otra pipeline la cual se llama",
+		"activities": [
+			{
+				"name": "Get Countries",
+				"description": "Se llaman las primeras carpetas con los nombres de los paises.",
+				"type": "GetMetadata",
+				"dependsOn": [
+					{
+						"activity": "Truncate data",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_MergeFolders",
+						"type": "DatasetReference"
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Loop countries",
+				"description": "Itera las carpetas de los países ",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Countries",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Countries').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set FolderNames",
+							"description": "Se reciben los nombres de los países desde los folders",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "CountryNames",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Child Pipeline",
+							"description": "Este pipeline funciona como conector a uno exterior que realizara el segundo loop con las subcarpetas de regiones.",
+							"type": "ExecutePipeline",
+							"dependsOn": [
+								{
+									"activity": "Set FolderNames",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"pipeline": {
+									"referenceName": "042_1ppl_child_pipeline",
+									"type": "PipelineReference"
+								},
+								"waitOnCompletion": true,
+								"parameters": {
+									"Paramcountry": {
+										"value": "@variables('CountryNames')",
+										"type": "Expression"
+									}
+								}
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "Truncate data",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "LS_ToSQL",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "TRUNCATE TABLE InvoiceData"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			}
+		],
+		"variables": {
+			"CountryNames": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-23T21:52:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

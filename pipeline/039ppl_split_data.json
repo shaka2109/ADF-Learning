@@ -1,0 +1,154 @@
+{
+	"name": "039ppl_split_data",
+	"properties": {
+		"description": "Usar la expresion replace si requieres hacer un query que filtre datos dinamicamente, agregando la variable dentro del query.",
+		"activities": [
+			{
+				"name": "Get countries",
+				"description": "Consigue un array de paises con una query como 'country':'pais'",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT country\nFROM orders",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_ToSQL",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Loop countries",
+				"description": "Toma el array con países del Lookup e itera por cada país guardando cada país en la variable y luego copiar la tabla filtrada para cada país con un query",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get countries",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get countries').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set country",
+							"description": "Toma el resultado del lookup, especificando el key para regresar el value... item.key",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Country",
+								"value": {
+									"value": "@item().country",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Split data",
+							"description": "1. Toma como fuente el mismo dataset pero usando una query para filtrar por país.\n2. Revisa la expresión para llamar la variable dinámica, importante! \n3. Guardar los archivos con nombres dinámicamente (parámetro y variable).\n4. Se concatena .csv a la variable dinámica para guardar en ese formato.",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set country",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@replace('SELECT OrderDate, ProductKey, EnglishProductName, SalesAmount\nFROM orders\nWHERE country = ''Countryname''','Countryname',variables('Country') )",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_ToSQL",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_CVSplit",
+									"type": "DatasetReference",
+									"parameters": {
+										"Country": {
+											"value": "@variables('Country')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"Country": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-22T03:50:06Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

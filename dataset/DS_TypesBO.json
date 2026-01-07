@@ -1,0 +1,27 @@
+{
+	"name": "DS_TypesBO",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_CSV",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Param_OutFolder": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": {
+					"value": "@dataset().Param_OutFolder",
+					"type": "Expression"
+				},
+				"fileSystem": "mycontainer"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

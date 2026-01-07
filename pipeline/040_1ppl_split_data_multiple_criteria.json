@@ -1,0 +1,185 @@
+{
+	"name": "040_1ppl_split_data_multiple_criteria",
+	"properties": {
+		"description": "Dividir datos de una SQL tabla por datos de dos columnas, creando carpetas para el primer filtro (1ra columna) y subcarpetas para el segundo filtro (2da columna)",
+		"activities": [
+			{
+				"name": "Get_countries_regions",
+				"description": "Llama las columnas de la tabla con la query y arroja un diccionario de COUNTRY y REGION",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT DISTINCT COUNTRY, REGION\nFROM InvoiceData\nORDER BY COUNTRY, REGION",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DS_SQLInvData",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Loop_country_region",
+				"description": "Establece el loop con dos variables donde una toma el pais y la otra la region. y luego se copian filtrando por medio de un query y guardandolas en carpetas y subcarpetas con sus respectivos nombres.",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get_countries_regions",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get_countries_regions').output.value",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set Country",
+							"description": "Toma el resultado COUNTRY del array",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "country",
+								"value": {
+									"value": "@item().COUNTRY",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Set Region",
+							"description": "Toma el resultado REGION del array",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "region",
+								"value": {
+									"value": "@item().REGION",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Create folders and files",
+							"description": "Toma las variables COUNTRY y REGION, las usa para filtrar la tabla por medio de un query.\nSe usa Replace para hacer el query dinamico.\nSe usa Concat para crear y guardar archivos dinamicamente.",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set Country",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								},
+								{
+									"activity": "Set Region",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "AzureSqlSource",
+									"sqlReaderQuery": {
+										"value": "@replace(replace('SELECT [YEAR], [MONTH], INVOICEID, SALES\nFROM InvoiceData\nWHERE COUNTRY = ''COUNTRYNAME'' AND REGION = ''REGIONNAME''','COUNTRYNAME',variables('country') ),'REGIONNAME',variables('region'))",
+										"type": "Expression"
+									},
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_SQLInvData",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_CSVCountryRegion",
+									"type": "DatasetReference",
+									"parameters": {
+										"paracountry": {
+											"value": "@variables('country')",
+											"type": "Expression"
+										},
+										"pararegion": {
+											"value": "@variables('region')",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"country": {
+				"type": "String"
+			},
+			"region": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-22T19:29:57Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

@@ -1,0 +1,38 @@
+{
+	"name": "047ppl_DataFlow_Intro",
+	"properties": {
+		"description": "Se realiza para transformar datos",
+		"activities": [
+			{
+				"name": "DF_001_Intro",
+				"type": "ExecuteDataFlow",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataflow": {
+						"referenceName": "df_001_Intro",
+						"type": "DataFlowReference"
+					},
+					"compute": {
+						"coreCount": 8,
+						"computeType": "General"
+					},
+					"traceLevel": "Fine"
+				}
+			}
+		],
+		"folder": {
+			"name": "Transformations"
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-29T19:11:05Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

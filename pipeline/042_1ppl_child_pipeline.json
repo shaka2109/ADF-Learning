@@ -1,0 +1,180 @@
+{
+	"name": "042_1ppl_child_pipeline",
+	"properties": {
+		"description": "Se crea un parametro para luego llamar la variable creada en el otro pipeline y conectar asi las dos pipelines. Una vez creado el parametro, puedes agregar la variable en la actividad exe_pipeline y asi conectar.\nSe agregan las dos nuevas columnas y se usa Wildcard paths para concatenar y llamar los archivos dentro de carpetas",
+		"activities": [
+			{
+				"name": "Get RegionNames",
+				"description": "Llama los nombres de las subcarpetas, REGION",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "DS_Regions",
+						"type": "DatasetReference",
+						"parameters": {
+							"ParamCountryName": {
+								"value": "@pipeline().parameters.Paramcountry",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "DelimitedTextReadSettings"
+					}
+				}
+			},
+			{
+				"name": "Loop Regions",
+				"description": "Llama los nombre de las regiones para cada país e itera sobre ellas",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get RegionNames",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get RegionNames').output.childItems",
+						"type": "Expression"
+					},
+					"isSequential": true,
+					"activities": [
+						{
+							"name": "Set RegionNames",
+							"description": "Guarda los nombres de las regiones que vienen en el Metadata",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Region",
+								"value": {
+									"value": "@item().name",
+									"type": "Expression"
+								}
+							}
+						},
+						{
+							"name": "Copy to SQL",
+							"description": "Recibe los datos y los copia, agregando dos columnas, una de países, y otra de regiones",
+							"type": "Copy",
+							"dependsOn": [
+								{
+									"activity": "Set RegionNames",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "COUNTRY",
+											"value": {
+												"value": "@pipeline().parameters.Paramcountry",
+												"type": "Expression"
+											}
+										},
+										{
+											"name": "REGION",
+											"value": {
+												"value": "@variables('Region')",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": true,
+										"wildcardFolderPath": {
+											"value": "@concat('Output1/',pipeline().parameters.Paramcountry,'/',variables('Region'))",
+											"type": "Expression"
+										},
+										"wildcardFileName": "*",
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DS_CountryRegion",
+									"type": "DatasetReference"
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DS_SQLCountRegion",
+									"type": "DatasetReference"
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"parameters": {
+			"Paramcountry": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"Region": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2025-12-23T21:52:09Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

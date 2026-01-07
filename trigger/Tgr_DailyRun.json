@@ -1,0 +1,25 @@
+{
+	"name": "Tgr_DailyRun",
+	"properties": {
+		"description": "La idea es que el trigger se ejecute diariamente",
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "073ppl_Trigger_Storage",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "ScheduleTrigger",
+		"typeProperties": {
+			"recurrence": {
+				"frequency": "Minute",
+				"interval": 1,
+				"startTime": "2026-01-04T17:44:00",
+				"timeZone": "SA Pacific Standard Time"
+			}
+		}
+	}
+}
