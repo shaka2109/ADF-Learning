@@ -1,0 +1,87 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "jakedevdf"
+		},
+		"DL_JSON_accountKey": {
+			"value": ""
+		},
+		"LS_CSV_accountKey": {
+			"value": ""
+		},
+		"LS_LocalFile_password": {
+			"value": ""
+		},
+		"LS_LocalSQL_password": {
+			"value": ""
+		},
+		"LS_ToSQL_password": {
+			"value": ""
+		},
+		"LS_excel_accountKey": {
+			"value": ""
+		},
+		"DL_JSON_properties_typeProperties_url": {
+			"value": "https://cdudemyvadls.dfs.core.windows.net/"
+		},
+		"LS_CSV_properties_typeProperties_url": {
+			"value": "https://cdudemyvadls.dfs.core.windows.net/"
+		},
+		"LS_KV_properties_typeProperties_baseUrl": {
+			"value": "https://kv-cdu-jake.vault.azure.net/"
+		},
+		"LS_LocalFile_properties_typeProperties_host": {
+			"value": "C:\\"
+		},
+		"LS_LocalFile_properties_typeProperties_userId": {
+			"value": "JAKE-ALEXANDER\\etl_user"
+		},
+		"LS_LocalSQL_properties_typeProperties_server": {
+			"value": "tcp:JAKE-ALEXANDER,1433"
+		},
+		"LS_LocalSQL_properties_typeProperties_database": {
+			"value": "AdventureWorksDW2025"
+		},
+		"LS_LocalSQL_properties_typeProperties_userName": {
+			"value": "etl_user"
+		},
+		"LS_SQLTest_properties_typeProperties_server": {
+			"value": "cdudevmysqlserver21.database.windows.net"
+		},
+		"LS_SQLTest_properties_typeProperties_database": {
+			"value": "cdudevmysqldb"
+		},
+		"LS_SQLTest_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"LS_ToSQL_properties_typeProperties_server": {
+			"value": "cdudevmysqlserver21.database.windows.net"
+		},
+		"LS_ToSQL_properties_typeProperties_database": {
+			"value": "cdudevmysqldb"
+		},
+		"LS_ToSQL_properties_typeProperties_userName": {
+			"value": "sqladmin"
+		},
+		"LS_excel_properties_typeProperties_url": {
+			"value": "https://cdudemyvadls.dfs.core.windows.net/"
+		},
+		"StorageEveTrigger2_properties_074ppl_Trigger_StorageEvent_parameters_FileName": {
+			"value": "@triggerBody().FileName"
+		},
+		"StorageEveTrigger2_properties_typeProperties_scope": {
+			"value": "/subscriptions/532604cc-e260-43d3-bc1b-fffcbe4dbc60/resourceGroups/CDU-DEV/providers/Microsoft.Storage/storageAccounts/cdudemyvadls"
+		},
+		"StorageEventTrigger_properties_typeProperties_scope": {
+			"value": "/subscriptions/532604cc-e260-43d3-bc1b-fffcbe4dbc60/resourceGroups/CDU-DEV/providers/Microsoft.Storage/storageAccounts/cdudemyvadls"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}

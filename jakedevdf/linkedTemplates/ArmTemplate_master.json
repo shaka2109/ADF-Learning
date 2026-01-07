@@ -1,0 +1,410 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "jakedevdf"
+		},
+		"DL_JSON_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'DL_JSON'"
+		},
+		"LS_CSV_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_CSV'"
+		},
+		"LS_LocalFile_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_LocalFile'"
+		},
+		"LS_LocalSQL_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_LocalSQL'"
+		},
+		"LS_ToSQL_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'LS_ToSQL'"
+		},
+		"LS_excel_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'LS_excel'"
+		},
+		"DL_JSON_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cdudemyvadls.dfs.core.windows.net/"
+		},
+		"LS_CSV_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cdudemyvadls.dfs.core.windows.net/"
+		},
+		"LS_KV_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://kv-cdu-jake.vault.azure.net/"
+		},
+		"LS_LocalFile_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "C:\\"
+		},
+		"LS_LocalFile_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "JAKE-ALEXANDER\\etl_user"
+		},
+		"LS_LocalSQL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "tcp:JAKE-ALEXANDER,1433"
+		},
+		"LS_LocalSQL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "AdventureWorksDW2025"
+		},
+		"LS_LocalSQL_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "etl_user"
+		},
+		"LS_SQLTest_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "cdudevmysqlserver21.database.windows.net"
+		},
+		"LS_SQLTest_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "cdudevmysqldb"
+		},
+		"LS_SQLTest_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"LS_ToSQL_properties_typeProperties_server": {
+			"type": "string",
+			"defaultValue": "cdudevmysqlserver21.database.windows.net"
+		},
+		"LS_ToSQL_properties_typeProperties_database": {
+			"type": "string",
+			"defaultValue": "cdudevmysqldb"
+		},
+		"LS_ToSQL_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "sqladmin"
+		},
+		"LS_excel_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://cdudemyvadls.dfs.core.windows.net/"
+		},
+		"StorageEveTrigger2_properties_074ppl_Trigger_StorageEvent_parameters_FileName": {
+			"type": "string",
+			"defaultValue": "@triggerBody().FileName"
+		},
+		"StorageEveTrigger2_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/532604cc-e260-43d3-bc1b-fffcbe4dbc60/resourceGroups/CDU-DEV/providers/Microsoft.Storage/storageAccounts/cdudemyvadls"
+		},
+		"StorageEventTrigger_properties_typeProperties_scope": {
+			"type": "string",
+			"defaultValue": "/subscriptions/532604cc-e260-43d3-bc1b-fffcbe4dbc60/resourceGroups/CDU-DEV/providers/Microsoft.Storage/storageAccounts/cdudemyvadls"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "jakedevdf_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"DL_JSON_accountKey": {
+						"value": "[parameters('DL_JSON_accountKey')]"
+					},
+					"LS_CSV_accountKey": {
+						"value": "[parameters('LS_CSV_accountKey')]"
+					},
+					"LS_ToSQL_password": {
+						"value": "[parameters('LS_ToSQL_password')]"
+					},
+					"LS_excel_accountKey": {
+						"value": "[parameters('LS_excel_accountKey')]"
+					},
+					"DL_JSON_properties_typeProperties_url": {
+						"value": "[parameters('DL_JSON_properties_typeProperties_url')]"
+					},
+					"LS_CSV_properties_typeProperties_url": {
+						"value": "[parameters('LS_CSV_properties_typeProperties_url')]"
+					},
+					"LS_KV_properties_typeProperties_baseUrl": {
+						"value": "[parameters('LS_KV_properties_typeProperties_baseUrl')]"
+					},
+					"LS_ToSQL_properties_typeProperties_server": {
+						"value": "[parameters('LS_ToSQL_properties_typeProperties_server')]"
+					},
+					"LS_ToSQL_properties_typeProperties_database": {
+						"value": "[parameters('LS_ToSQL_properties_typeProperties_database')]"
+					},
+					"LS_ToSQL_properties_typeProperties_userName": {
+						"value": "[parameters('LS_ToSQL_properties_typeProperties_userName')]"
+					},
+					"LS_excel_properties_typeProperties_url": {
+						"value": "[parameters('LS_excel_properties_typeProperties_url')]"
+					},
+					"StorageEventTrigger_properties_typeProperties_scope": {
+						"value": "[parameters('StorageEventTrigger_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_2')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_4",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_4.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_3')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_5",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_5.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"LS_LocalFile_password": {
+						"value": "[parameters('LS_LocalFile_password')]"
+					},
+					"LS_LocalSQL_password": {
+						"value": "[parameters('LS_LocalSQL_password')]"
+					},
+					"LS_LocalFile_properties_typeProperties_host": {
+						"value": "[parameters('LS_LocalFile_properties_typeProperties_host')]"
+					},
+					"LS_LocalFile_properties_typeProperties_userId": {
+						"value": "[parameters('LS_LocalFile_properties_typeProperties_userId')]"
+					},
+					"LS_LocalSQL_properties_typeProperties_server": {
+						"value": "[parameters('LS_LocalSQL_properties_typeProperties_server')]"
+					},
+					"LS_LocalSQL_properties_typeProperties_database": {
+						"value": "[parameters('LS_LocalSQL_properties_typeProperties_database')]"
+					},
+					"LS_LocalSQL_properties_typeProperties_userName": {
+						"value": "[parameters('LS_LocalSQL_properties_typeProperties_userName')]"
+					},
+					"LS_SQLTest_properties_typeProperties_server": {
+						"value": "[parameters('LS_SQLTest_properties_typeProperties_server')]"
+					},
+					"LS_SQLTest_properties_typeProperties_database": {
+						"value": "[parameters('LS_SQLTest_properties_typeProperties_database')]"
+					},
+					"LS_SQLTest_properties_typeProperties_userName": {
+						"value": "[parameters('LS_SQLTest_properties_typeProperties_userName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_4')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_6",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_6.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_5')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_7",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_7.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_6')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_8",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_8.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_7')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_9",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_9.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_8')]"
+			]
+		},
+		{
+			"name": "jakedevdf_ArmTemplate_10",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2024-03-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_10.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"StorageEveTrigger2_properties_074ppl_Trigger_StorageEvent_parameters_FileName": {
+						"value": "[parameters('StorageEveTrigger2_properties_074ppl_Trigger_StorageEvent_parameters_FileName')]"
+					},
+					"StorageEveTrigger2_properties_typeProperties_scope": {
+						"value": "[parameters('StorageEveTrigger2_properties_typeProperties_scope')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'jakedevdf_ArmTemplate_9')]"
+			]
+		}
+	]
+}
