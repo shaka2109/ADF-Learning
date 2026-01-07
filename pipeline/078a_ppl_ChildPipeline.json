@@ -1,5 +1,5 @@
 {
-	"name": "078a_ppl",
+	"name": "078a_ppl_ChildPipeline",
 	"properties": {
 		"activities": [
 			{
@@ -161,10 +161,17 @@
 					"storedProcedureName": "[dbo].[sp_IncrementalLoad]",
 					"storedProcedureParameters": {
 						"filetimestamp": {
-							"value": "",
-							"type": "DateTime"
+							"value": {
+								"value": "@formatDateTime(variables('maxdate'), 'yyyy-MM-dd HH:mm:ss')",
+								"type": "Expression"
+							},
+							"type": "String"
 						},
 						"tablename": {
+							"value": {
+								"value": "@pipeline().parameters.pr_tablename",
+								"type": "Expression"
+							},
 							"type": "String"
 						}
 					}

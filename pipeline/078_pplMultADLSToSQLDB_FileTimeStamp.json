@@ -140,7 +140,7 @@
 							"userProperties": [],
 							"typeProperties": {
 								"pipeline": {
-									"referenceName": "078a_ppl",
+									"referenceName": "078a_ppl_ChildPipeline",
 									"type": "PipelineReference"
 								},
 								"waitOnCompletion": true,
